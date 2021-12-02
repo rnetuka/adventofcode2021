@@ -54,6 +54,7 @@
  * How many measurements are larger than the previous measurement?
  *
  * --- Part Two ---
+ *
  * Considering every single measurement isn't as useful as you expected: there's just too much noise in the data.
  *
  * Instead, consider sums of a three-measurement sliding window. Again considering the above example:
@@ -98,6 +99,11 @@
 
 using namespace std;
 
+namespace Day1 {
+    int solution_1();
+    int solution_2();
+}
+
 int count_increases(const vector<int>& measurements) {
     int increases = 0;
     for (int i = 1; i < measurements.size(); i++)
@@ -106,12 +112,12 @@ int count_increases(const vector<int>& measurements) {
     return increases;
 }
 
-int solution_1() {
+int Day1::solution_1() {
     vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
     return count_increases(measurements);
 }
 
-int solution_2() {
+int Day1::solution_2() {
     vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
     vector<int> windowed_measurements;
     for (int i = 2; i < measurements.size() - 2; i += 3) {
@@ -131,6 +137,6 @@ void Day1::print_answers() {
     cout << "  How many sums are larger than the previous sum? " << solution_2() << "\n";
 }
 
-// Correct answers:
+// Correct answers
 // Part 1: 1288
 // Part 2: 1311
