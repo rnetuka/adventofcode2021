@@ -29,6 +29,17 @@ vector<int> split(const string& str, char delimiter) {
     return tokens;
 }
 
+vector<string> split(const string& str, const string& delimiter) {
+    regex re { delimiter };
+    sregex_token_iterator it { str.begin(), str.end(), re, -1 };
+    vector<string> tokens { it, {} };
+    tokens.erase(
+            remove_if(tokens.begin(), tokens.end(), [](string const& s) { return s.size() == 0; }),
+            tokens.end());
+
+    return tokens;
+}
+
 char to_char(int digit) {
     if (digit < 0 || digit > 9)
         throw invalid_argument("Digit out of range");

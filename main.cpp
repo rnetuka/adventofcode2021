@@ -3,6 +3,7 @@
 #include "day02.h"
 #include "day03.h"
 #include "day04.h"
+#include "day05.h"
 
 using namespace std;
 
@@ -12,4 +13,5 @@ int main() {
     Day2::print_answers();
     Day3::print_answers();
     Day4::print_answers();
+    Day5::print_answers();
 }
