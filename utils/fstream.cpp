@@ -29,16 +29,25 @@ vector<string> File::read_lines() const {
     while (stream) {
         string line;
         getline(stream, line);
-        if (! line.empty())
-            lines.push_back(line);
+        //if (! line.empty())
+        lines.push_back(line);
     }
     return lines;
 }
 
 template <>
 vector<int> File::read_lines() const {
-    vector<string> lines = read_lines();
+    /*vector<string> lines = read_lines();
     vector<int> result(lines.size());
     transform(lines.begin(), lines.end(), result.begin(), [](auto& line) { return stoi(line); });
-    return result;
+    return result;*/
+    vector<int> lines;
+    fstream stream { path };
+    while (stream) {
+        string line;
+        getline(stream, line);
+        if (! line.empty())
+            lines.push_back(stoi(line));
+    }
+    return lines;
 }

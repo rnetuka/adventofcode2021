@@ -90,6 +90,8 @@ int Day2::solution_1() {
     int position = 0;
     int depth = 0;
     for (const string& command : File::open("input/day02.txt").read_lines()) {
+        if (command.empty())
+            continue;
         auto [move, distance] = parse(command);
         if (move == "forward")
             position += distance;
@@ -106,6 +108,8 @@ int Day2::solution_2() {
     int depth = 0;
     int aim = 0;
     for (const string& command : File::open("input/day02.txt").read_lines()) {
+        if (command.empty())
+            continue;
         auto [move, x] = parse(command);
         if (move == "forward") {
             position += x;

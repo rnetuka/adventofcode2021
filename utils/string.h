@@ -4,10 +4,14 @@
 
 #pragma once
 
-#include <array>
 #include <string>
 #include <vector>
 
-std::vector<std::string> split(const std::string& str, char delimiter = ' ');
 char to_char(int digit);
-int stoi(const std::string& str, int base);
+int stoi(const std::string& string, int base);
+std::string left_trim(const std::string& string);
+std::string right_trim(const std::string& string);
+std::string trim(const std::string& string);
+
+template <typename T = std::string>
+std::vector<T> split(const std::string& str, char delimiter = ' ');
