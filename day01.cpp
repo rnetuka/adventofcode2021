@@ -92,51 +92,52 @@
  * Consider sums of a three-measurement sliding window. How many sums are larger than the previous sum?
  */
 
-#include <iostream>
-#include <vector>
+#include <cassert>
 #include "day01.h"
-#include "utils/fstream.h"
+#include "lib/all.h"
 
-using namespace std;
+using namespace lib;
 
 namespace Day1 {
-    int solution_1();
-    int solution_2();
-}
 
-int count_increases(const vector<int>& measurements) {
-    int increases = 0;
-    for (int i = 1; i < measurements.size(); i++)
-        if (measurements[i] > measurements[i - 1])
-            increases++;
-    return increases;
-}
-
-int Day1::solution_1() {
-    vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
-    return count_increases(measurements);
-}
-
-int Day1::solution_2() {
-    vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
-    vector<int> windowed_measurements;
-    for (int i = 2; i < measurements.size() - 2; i += 3) {
-        int window_a = measurements[i - 2] + measurements[i - 1] + measurements[i];
-        int window_b = measurements[i - 1] + measurements[i]     + measurements[i + 1];
-        int window_c = measurements[i]     + measurements[i + 1] + measurements[i + 2];
-        windowed_measurements.push_back(window_a);
-        windowed_measurements.push_back(window_b);
-        windowed_measurements.push_back(window_c);
+    int count_increases(const vector<int>& measurements) {
+        int increases = 0;
+        for (int i = 1; i < measurements.size(); i++)
+            if (measurements[i] > measurements[i - 1])
+                increases++;
+        return increases;
     }
-    return count_increases(windowed_measurements);
-}
 
-void Day1::print_answers() {
-    cout << "Day 1\n";
-    cout << "  How many measurements are larger than the previous measurement? " << solution_1() << "\n";
-    cout << "  How many sums are larger than the previous sum? " << solution_2() << "\n";
-}
+    int solution_1() {
+        vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
+        return count_increases(measurements);
+    }
 
-// Correct answers
-// Part 1: 1288
-// Part 2: 1311
+    int solution_2() {
+        vector<int> measurements = File::open("input/day01.txt").read_lines<int>();
+        vector<int> windowed_measurements;
+        for (int i = 2; i < measurements.size() - 2; i += 3) {
+            int window_a = measurements[i - 2] + measurements[i - 1] + measurements[i];
+            int window_b = measurements[i - 1] + measurements[i]     + measurements[i + 1];
+            int window_c = measurements[i]     + measurements[i + 1] + measurements[i + 2];
+            windowed_measurements.push_back(window_a);
+            windowed_measurements.push_back(window_b);
+            windowed_measurements.push_back(window_c);
+        }
+        return count_increases(windowed_measurements);
+    }
+
+    void print_answers() {
+        int answer_1 = solution_1();
+        int answer_2 = solution_2();
+
+        cout << "Day 1\n";
+        cout << "  How many measurements are larger than the previous measurement? " << answer_1 << "\n";
+        cout << "  How many sums are larger than the previous sum? " << answer_2 << "\n";
+
+        // Check correct answers
+        assert(answer_1 == 1288);
+        assert(answer_2 == 1311);
+    }
+
+}

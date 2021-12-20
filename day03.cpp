@@ -93,77 +93,77 @@
  * decimal, not binary.)
  */
 
-#include <iostream>
-#include <vector>
-#include <set>
-#include <string>
+#include <cassert>
 #include "day03.h"
-#include "utils/fstream.h"
-#include "utils/string.h"
+#include "lib/all.h"
 
-using namespace std;
+using namespace lib;
 
 namespace Day3 {
-    int solution_1();
-    int solution_2();
-}
 
-template <typename Container>
-int most_common_bit(const Container& numbers, int position) {
-    int zeros = 0;
-    int ones = 0;
-    for (auto& number : numbers) {
-        if (number[position] == '0')
-            zeros++;
-        else
-            ones++;
+    template <typename Container>
+    int most_common_bit(const Container& numbers, int position) {
+        int zeros = 0;
+        int ones = 0;
+        for (const string& number : numbers) {
+            if (number[position] == '0')
+                zeros++;
+            else
+                ones++;
+        }
+        return ones >= zeros ? 1 : 0;
     }
-    return ones >= zeros ? 1 : 0;
-}
 
-int Day3::solution_1() {
-    auto numbers = File::open("input/day03.txt").read_lines();
-    int length = numbers[0].length();
-    string gamma(length, '-');
-    string epsilon(length, '-');
-    for (int i = 0; i < length; i++) {
-        int bit = most_common_bit(numbers, i);
-        gamma[i] = to_char(bit);
-        epsilon[i] = to_char(!bit);
+    int solution_1() {
+        auto numbers = File::open("input/day03.txt").read_lines();
+        int length = numbers[0].length;
+
+        string gamma;
+        string epsilon;
+
+        for (int i = 0; i < length; i++) {
+            int bit = most_common_bit(numbers, i);
+            gamma += bit;
+            epsilon += !bit;
+        }
+        return stoi(gamma, 2) * stoi(epsilon, 2);
     }
-    return stoi(gamma, 2) * stoi(epsilon, 2);
-}
 
-int Day3::solution_2() {
-    auto numbers = File::open("input/day03.txt").read_lines();
-    int length = numbers[0].length();
+    int solution_2() {
+        auto numbers = File::open("input/day03.txt").read_lines();
+        int length = numbers[0].length;
 
-    set<string> oxygen_candidates { numbers.begin(), numbers.end() };
-    set<string> co2_candidates { numbers.begin(), numbers.end() };
+        set<string> oxygen_candidates { numbers };
+        set<string> co2_candidates { numbers };
 
-    string oxygen;
-    string co2;
+        string oxygen;
+        string co2;
 
-    for (int i = 0; i < length; i++) {
-        char oxygen_bit = to_char(most_common_bit(oxygen_candidates, i));
-        erase_if(oxygen_candidates, [i, oxygen_bit](auto& number) { return number[i] != oxygen_bit; });
-        if (oxygen_candidates.size() == 1)
-            oxygen = *oxygen_candidates.begin();
+        for (int i = 0; i < length; i++) {
+            char oxygen_bit = to_char(most_common_bit(oxygen_candidates, i));
+            oxygen_candidates.erase_if([i, oxygen_bit](auto& number) { return number[i] != oxygen_bit; });
+            if (oxygen_candidates.size() == 1)
+                oxygen = *oxygen_candidates.begin();
 
-        char co2_bit = to_char(!most_common_bit(co2_candidates, i));
-        erase_if(co2_candidates, [i, co2_bit](auto& number) { return number[i] != co2_bit; });
-        if (co2_candidates.size() == 1)
-            co2 = *co2_candidates.begin();
+            char co2_bit = to_char(! most_common_bit(co2_candidates, i));
+            co2_candidates.erase_if([i, co2_bit](auto& number) { return number[i] != co2_bit; });
+            if (co2_candidates.size() == 1)
+                co2 = *co2_candidates.begin();
+        }
+        return stoi(oxygen, 2) * stoi(co2, 2);
     }
-    return stoi(oxygen, 2) * stoi(co2, 2);
-}
 
-void Day3::print_answers() {
-    cout << "Day 3\n";
-    cout << "  What is the power consumption of the submarine? " << solution_1() << "\n";
-    cout << "  What is the life support rating of the submarine? " << solution_2() << "\n";
-}
+    void print_answers() {
+        int answer_1 = solution_1();
+        int answer_2 = solution_2();
 
-// Correct answers
-// Part 1: 741950
-// Part 2: 903810
+        cout << "Day 3\n";
+        cout << "  What is the power consumption of the submarine? " << answer_1 << "\n";
+        cout << "  What is the life support rating of the submarine? " << answer_2 << "\n";
+
+        // Check correct answers
+        assert(answer_1 == 741950);
+        assert(answer_2 == 903810);
+    }
+
+}

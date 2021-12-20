@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include <vector>
-
 namespace Day1 {
+
     void print_answers();
+
 };

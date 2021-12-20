@@ -22,19 +22,15 @@ namespace geom {
 
 }
 
-namespace std {
+template <>
+struct std::hash<geom::Point> {
 
-    template <>
-    struct hash<geom::Point> {
+    std::size_t operator()(const geom::Point& point) const {
+        std::size_t hash = 0;
+        hash += point.x;
+        hash <<= 32;
+        hash += point.y;
+        return hash;
+    }
 
-        std::size_t operator()(const geom::Point& point) const {
-            std::size_t hash = 0;
-            hash += point.x;
-            hash <<= 32;
-            hash += point.y;
-            return hash;
-        }
-
-    };
-
-}
+};

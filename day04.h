@@ -5,5 +5,7 @@
 #pragma once
 
 namespace Day4 {
+
     void print_answers();
+
 }

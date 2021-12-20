@@ -83,186 +83,154 @@
  * Figure out which board will win last. Once it wins, what would its final score be?
  */
 
-#include <iostream>
-#include <regex>
-#include <set>
-#include <vector>
-#include <numeric>
+#include <cassert>
 #include "day04.h"
-#include "utils/algorithm.h"
-#include "utils/fstream.h"
-#include "utils/string.h"
+#include "lib/all.h"
 
-using namespace std;
+using namespace lib;
 
 namespace Day4 {
-    int solution_1();
-    int solution_2();
-}
 
-const int marked = -1;
+    const int marked = -1;
 
-class BingoBoard {
-private:
-    const int size = 5;
-    vector<int> numbers;
 
-public:
-    BingoBoard(vector<int>&& numbers);
+    class BingoBoard {
+    private:
+        static const int size = 5;
+        grid<int> numbers;
 
-    void mark(int number);
-    bool check_row(int i) const;
-    bool check_column(int i) const;
-    bool has_match() const;
-    int score() const;
-};
+    public:
+        BingoBoard(const grid<int>& numbers) : numbers { numbers } {
 
-BingoBoard::BingoBoard(vector<int>&& numbers) : numbers { move(numbers) } {
-
-}
-
-void BingoBoard::mark(int number) {
-    for (auto& square : numbers)
-        if (square == number)
-            square = marked;
-}
-
-bool BingoBoard::check_row(int i) const {
-    int offset = i * size;
-    return all_of(
-        numbers.begin() + offset,
-        numbers.begin() + offset + size,
-        [](int number) { return number == marked; }
-    );
-}
-
-bool BingoBoard::check_column(int i) const {
-    return numbers[i] == marked
-        && numbers[i + size] == marked
-        && numbers[i + 2 * size] == marked
-        && numbers[i + 3 * size] == marked
-        && numbers[i + 4 * size] == marked;
-}
-
-bool BingoBoard::has_match() const {
-    for (int i = 0; i < size; i++)
-        if (check_row(i) || check_column(i))
-            return true;
-    return false;
-}
-
-int BingoBoard::score() const {
-    int score = 0;
-    for (auto square : numbers)
-        if (square != marked)
-            score += square;
-    return score;
-}
-
-class Bingo {
-private:
-    int round;
-    vector<int> numbers;
-
-public:
-    const int number;
-    const vector<BingoBoard> boards;
-
-    Bingo(vector<int> numbers);
-
-    void join(const BingoBoard& board);
-    void next_round();
-    operator bool() const;
-};
-
-Bingo::Bingo(vector<int> numbers) : number { 0 }, numbers { move(numbers) } {
-    round = 0;
-}
-
-void Bingo::join(const BingoBoard& board) {
-    const_cast<vector<BingoBoard>&>(boards).push_back(board);
-}
-
-void Bingo::next_round() {
-    const_cast<int&>(number) = numbers.at(round);
-    round++;
-    for (auto& board : const_cast<vector<BingoBoard>&>(boards))
-        board.mark(number);
-}
-
-Bingo create_game() {
-    auto lines = File::open("input/day04.txt").read_lines();
-    vector<int> numbers = split<int>(lines[0], ',');
-
-    Bingo game { numbers };
-
-    for (int i = 2; i < lines.size(); i++) {
-        lines[i] = regex_replace(lines[i], regex("  "), " ");
-        lines[i] = left_trim(lines[i]);
-    }
-
-    int i = 2;
-    while (i < lines.size()) {
-        vector<int> board = concatenate<int>(
-            split<int>(lines[i]),
-            split<int>(lines[i + 1]),
-            split<int>(lines[i + 2]),
-            split<int>(lines[i + 3]),
-            split<int>(lines[i + 4])
-        );
-        game.join(move(board));
-        i += 6;
-    }
-    return game;
-}
-
-Bingo::operator bool() const {
-    return round < numbers.size();
-}
-
-int Day4::solution_1() {
-    auto bingo = create_game();
-    while (bingo) {
-        bingo.next_round();
-        for (auto& board : bingo.boards)
-            if (board.has_match())
-                return bingo.number * board.score();
-    }
-    return -1;
-}
-
-int Day4::solution_2() {
-    auto bingo = create_game();
-
-    set<int> remaining_boards;
-    for (int id = 0; id < bingo.boards.size(); id++)
-        remaining_boards.insert(id);
-
-    const BingoBoard* last_winner = nullptr;
-
-    while (bingo) {
-        if (remaining_boards.empty())
-            return bingo.number * last_winner->score();
-
-        if (remaining_boards.size() == 1) {
-            int id = *remaining_boards.begin();
-            last_winner = &bingo.boards[id];
         }
 
-        bingo.next_round();
-        for (int id = 0; id < bingo.boards.size(); id++)
-            if (remaining_boards.contains(id) && bingo.boards[id].has_match())
-                remaining_boards.erase(id);
+        void mark(int number) {
+            for (int& square : numbers)
+                if (square == number)
+                    square = marked;
+        }
+
+        bool check_row(int i) const {
+            return numbers.row(i).all_of([](int number) { return number == marked; });
+        }
+
+        bool check_column(int j) const {
+            return numbers.column(j).all_of([](int number) { return number == marked; });
+        }
+
+        bool has_match() const {
+            for (int i = 0; i < size; i++)
+                if (check_row(i) || check_column(i))
+                    return true;
+            return false;
+        }
+
+        int score() const {
+            int score = 0;
+            for (int square : numbers)
+                if (square != marked)
+                    score += square;
+            return score;
+        }
+
+    };
+
+
+    class Bingo {
+    private:
+        vector<int> numbers;
+        int round;
+
+    public:
+        vector<BingoBoard> boards;
+
+        Bingo(const vector<int>& numbers) : numbers { numbers } {
+            round = 0;
+        }
+
+        void join(const BingoBoard& board) {
+            boards.push_back(board);
+        }
+
+        int next_round() {
+            int number = numbers[round];
+            round++;
+            for (auto& board : boards)
+                board.mark(number);
+            return number;
+        }
+
+        operator bool() const {
+            return round < numbers.size();
+        }
+
+    };
+
+
+    Bingo create_game() {
+        auto lines = File::open("input/day04.txt").read_lines();
+        vector<int> numbers = lines[0].split<int>(',');
+
+        Bingo game { numbers };
+
+        for (int i = 2; i < lines.size(); i++) {
+            lines[i] = lines[i].replace_all("  ", " ");
+            lines[i] = lines[i].left_trim();
+        }
+
+        int width = 5;
+        int height = 5;
+
+        int i = 2;
+        while (i < lines.size()) {
+            grid<int> board { width, height };
+            board[0] = lines[i].split<int>();
+            board[1] = lines[i + 1].split<int>();
+            board[2] = lines[i + 2].split<int>();
+            board[3] = lines[i + 3].split<int>();
+            board[4] = lines[i + 4].split<int>();
+            game.join(board);
+            i += 6;
+        }
+        return game;
     }
-    return -1;
-}
 
-void Day4::print_answers() {
-    cout << "Day 4\n";
-    cout << "  What will your final score be if you choose that board? " << solution_1() << "\n";
-    cout << "  Once it wins, what would its final score be? " << solution_2() << "\n";
-}
+    int solution_1() {
+        auto bingo = create_game();
+        while (bingo) {
+            int number = bingo.next_round();
+            for (auto& board : bingo.boards)
+                if (board.has_match())
+                    return number * board.score();
+        }
+        return -1;
+    }
 
-// Correct answers
-// Part 1: 6592
-// Part 2: 31755
+    int solution_2() {
+        auto bingo = create_game();
+
+        while (bingo) {
+            int number = bingo.next_round();
+
+            if (bingo.boards.size() == 1 && bingo.boards[0].has_match())
+                return number * bingo.boards[0].score();
+
+            bingo.boards.erase_if([](auto& board) { return board.has_match(); });
+        }
+        return -1;
+    }
+
+    void print_answers() {
+        int answer_1 = solution_1();
+        int answer_2 = solution_2();
+
+        cout << "Day 4\n";
+        cout << "  What will your final score be if you choose that board? " << answer_1 << "\n";
+        cout << "  Once it wins, what would its final score be? " << answer_2 << "\n";
+
+        // Check correct answers
+        assert(answer_1 == 6592);
+        assert(answer_2 == 31755);
+    }
+
+}

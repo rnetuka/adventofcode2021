@@ -18,7 +18,7 @@
  * - 5,5 -> 8,2
  *
  * Each line of vents is given as a line segment in the format x1,y1 -> x2,y2 where x1,y1 are the coordinates of one end
- * the line segment and x2,y2 are the coordinates of the other end. These line segments include the points at both ends.
+ * the line segment and x2,y2 are the coordinates of the other end. These line segments_for include the points at both ends.
  *
  * In other words:
  * - An entry like 1,1 -> 1,3 covers points 1,1, 1,2, and 1,3.
@@ -75,62 +75,68 @@
  * Consider all of the lines. At how many points do at least two lines overlap?
  */
 
-#include <iostream>
-#include <unordered_set>
-#include <vector>
+#include <cassert>
 #include "day05.h"
-#include "lib/geometry.h"
-#include "utils/fstream.h"
-#include "utils/string.h"
+#include "lib/all.h"
 
 using namespace geom;
-using namespace std;
+using namespace lib;
 
 namespace Day5 {
-    LineSegment parse(const string& str);
-    vector<LineSegment> read_input();
-    int solution_1();
-    int solution_2();
-}
 
-LineSegment Day5::parse(const string& string) {
-    auto points = split(string, " -> ");
-    auto a = split<int>(points[0], ',');
-    auto b = split<int>(points[1], ',');
-    return LineSegment::from(a[0], a[1]).to(b[0], b[1]);
-}
-
-vector<LineSegment> Day5::read_input() {
-    auto lines = File::open("input/day05.txt").read_lines();
-    vector<LineSegment> line_segments;
-    for (string& line : lines)
-        if (! line.empty())
-            line_segments.push_back(Day5::parse(line));
-    return line_segments;
-}
-
-vector<Point> points_of(const LineSegment& line_segment) {
-    // Line segments in this puzzle are either horizontal (dx = +-1, dy = 0), vertical (dx = 0, dy = +-1) or
-    // diagonal (+-dx = +-dy). Direction vector can therefore be normalized to a size of 1
-    Vector v = line_segment.direction_vector();
-    int dx = v.dx / max(abs(v.dx), abs(v.dy));
-    int dy = v.dy / max(abs(v.dx), abs(v.dy));
-    vector<Point> points;
-    Point point = line_segment.a;
-    while (point != line_segment.b) {
-        points.push_back(point);
-        point = point + Vector { dx, dy };
+    LineSegment parse(const string& string) {
+        auto points = string.split(" -> ");
+        auto a = points[0].split<int>(',');
+        auto b = points[1].split<int>(',');
+        return LineSegment::from(a[0], a[1]).to(b[0], b[1]);
     }
-    points.push_back(line_segment.b);
-    return points;
-}
 
-int Day5::solution_1() {
-    vector<LineSegment> line_segments = read_input();
-    unordered_set<Point> points;
-    unordered_set<Point> overlaps;
-    for (auto& line_segment : line_segments)
-        if (line_segment.horizontal() || line_segment.vertical()) {
+    vector<LineSegment> read_input() {
+        auto lines = File::open("input/day05.txt").read_lines();
+        vector<LineSegment> line_segments;
+        for (string& line : lines)
+            if (! line.empty())
+                line_segments.push_back(parse(line));
+        return line_segments;
+    }
+
+    vector<Point> points_of(const LineSegment& line_segment) {
+        // Line segments_for in this puzzle are either horizontal (dx = +-1, dy = 0), vertical (dx = 0, dy = +-1) or
+        // diagonal (+-dx = +-dy). Direction vector can therefore be normalized to a size of 1
+        geom::Vector v = line_segment.direction_vector();
+        int dx = v.dx / std::max(abs(v.dx), abs(v.dy));
+        int dy = v.dy / std::max(abs(v.dx), abs(v.dy));
+        vector<Point> points;
+        Point point = line_segment.a;
+        while (point != line_segment.b) {
+            points.push_back(point);
+            point = point + geom::Vector { dx, dy };
+        }
+        points.push_back(line_segment.b);
+        return points;
+    }
+
+    int solution_1() {
+        vector<LineSegment> line_segments = read_input();
+        set<Point> points;
+        set<Point> overlaps;
+        for (auto& line_segment : line_segments)
+            if (line_segment.horizontal() || line_segment.vertical()) {
+                vector<Point> line_segment_points = points_of(line_segment);
+                for (auto& point : line_segment_points) {
+                    if (points.contains(point))
+                        overlaps.insert(point);
+                    points.insert(point);
+                }
+            }
+        return overlaps.size();
+    }
+
+    int solution_2() {
+        vector<LineSegment> line_segments = read_input();
+        set<Point> points;
+        set<Point> overlaps;
+        for (auto& line_segment : line_segments) {
             vector<Point> line_segment_points = points_of(line_segment);
             for (auto& point : line_segment_points) {
                 if (points.contains(point))
@@ -138,30 +144,20 @@ int Day5::solution_1() {
                 points.insert(point);
             }
         }
-    return overlaps.size();
-}
-
-int Day5::solution_2() {
-    vector<LineSegment> line_segments = read_input();
-    unordered_set<Point> points;
-    unordered_set<Point> overlaps;
-    for (auto& line_segment : line_segments) {
-        vector<Point> line_segment_points = points_of(line_segment);
-        for (auto& point : line_segment_points) {
-            if (points.contains(point))
-                overlaps.insert(point);
-            points.insert(point);
-        }
+        return overlaps.size();
     }
-    return overlaps.size();
-}
 
-void Day5::print_answers() {
-    cout << "Day 5\n";
-    cout << "  At how many points do at least two lines overlap? " << solution_1() << "\n";
-    cout << "  At how many points do at least two lines overlap? " << solution_2() << "\n";
-}
+    void print_answers() {
+        int answer_1 = solution_1();
+        int answer_2 = solution_2();
 
-// Correct answers
-// Part 1: 5608
-// Part 2: 20299
+        cout << "Day 5\n";
+        cout << "  At how many points do at least two lines overlap? " << answer_1 << "\n";
+        cout << "  At how many points do at least two lines overlap? " << answer_2 << "\n";
+
+        // Check correct answers
+        assert(answer_1 == 5608);
+        assert(answer_2 == 20299);
+    }
+
+}

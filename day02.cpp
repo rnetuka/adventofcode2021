@@ -65,70 +65,71 @@
  * following the planned course. What do you get if you multiply your final horizontal position by your final depth?
  */
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include <cassert>
 #include "day02.h"
-#include "utils/fstream.h"
-#include "utils/string.h"
+#include "lib/all.h"
 
-using namespace std;
+using namespace lib;
 
 namespace Day2 {
-    int solution_1();
-    int solution_2();
-}
 
-pair<string, int> parse(const string& command) {
-    auto parts = split(command);
-    string move = parts[0];
-    int x = stoi(parts[1]);
-    return { move, x };
-}
-
-int Day2::solution_1() {
-    int position = 0;
-    int depth = 0;
-    for (const string& command : File::open("input/day02.txt").read_lines()) {
-        if (command.empty())
-            continue;
-        auto [move, distance] = parse(command);
-        if (move == "forward")
-            position += distance;
-        if (move == "up")
-            depth -= distance;
-        if (move == "down")
-            depth += distance;
+    std::pair<string, int> parse(const string& command) {
+        auto parts = command.split();
+        string move = parts[0];
+        int x = parts[1];
+        return { move, x };
     }
-    return position * depth;
-}
 
-int Day2::solution_2() {
-    int position = 0;
-    int depth = 0;
-    int aim = 0;
-    for (const string& command : File::open("input/day02.txt").read_lines()) {
-        if (command.empty())
-            continue;
-        auto [move, x] = parse(command);
-        if (move == "forward") {
-            position += x;
-            depth += aim * x;
+    int solution_1() {
+        auto commands = File::open("input/day02.txt").read_lines();
+        int position = 0;
+        int depth = 0;
+        for (string& command : commands) {
+            if (command.empty())
+                continue;
+            auto [move, distance] = parse(command);
+            if (move == "forward")
+                position += distance;
+            if (move == "up")
+                depth -= distance;
+            if (move == "down")
+                depth += distance;
         }
-        if (move == "up")
-            aim -= x;
-        if (move == "down")
-            aim += x;
+        return position * depth;
     }
-    return position * depth;
-}
 
-void Day2::print_answers() {
-    cout << "Day2\n";
-    cout << "  What do you get if you multiply your final horizontal position by your final depth? " << solution_1() << "\n";
-    cout << "  What do you get if you multiply your final horizontal position by your final depth? " << solution_2() << "\n";
-}
+    int solution_2() {
+        auto commands = File::open("input/day02.txt").read_lines();
+        int position = 0;
+        int depth = 0;
+        int aim = 0;
+        for (string& command : commands) {
+            if (command.empty())
+                continue;
+            auto [move, x] = parse(command);
+            if (move == "forward") {
+                position += x;
+                depth += aim * x;
+            }
+            if (move == "up")
+                aim -= x;
+            if (move == "down")
+                aim += x;
+        }
+        return position * depth;
+    }
 
-// Correct answers
-// Part one: 1962940
-// Part two: 1813664422
+    void print_answers() {
+        int answer_1 = solution_1();
+        int answer_2 = solution_2();
+
+        cout << "Day2\n";
+        cout << "  What do you get if you multiply your final horizontal position by your final depth? " << answer_1 << "\n";
+        cout << "  What do you get if you multiply your final horizontal position by your final depth? " << answer_2 << "\n";
+
+        // Check correct answers
+        assert(answer_1 == 1962940);
+        assert(answer_2 == 1813664422);
+    }
+
+}
