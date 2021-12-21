@@ -58,6 +58,8 @@ namespace lib {
         String operator+(int number) const;
         String& operator+=(char character);
         String& operator+=(int number);
+        String& operator+=(const char* str);
+        String& operator+=(const String& other);
         operator int() const;
         operator std::string() const;
 
@@ -69,19 +71,17 @@ namespace lib {
 
     int length(const std::string& string);
     int atoi(char character);
+    char itoa(int number);
+    int stoi(const String& string, int base = 10);
 
 }
 
-namespace std {
+template <>
+struct std::hash<lib::String> {
 
-    template <>
-    struct hash<lib::String> {
+    std::size_t operator()(const lib::String& string) const {
+        std::hash<std::string> h;
+        return h(string);
+    }
 
-        std::size_t operator()(const lib::String& string) const {
-            hash<std::string> h;
-            return h(string);
-        }
-
-    };
-
-}
+};

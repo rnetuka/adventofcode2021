@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include <algorithm>
 #include <stdexcept>
 #include <deque>
 #include <functional>
@@ -17,6 +18,12 @@ namespace lib {
 
     public:
 
+        Vector() = default;
+
+        Vector(std::initializer_list<T>&& elements) : elements { elements } {
+
+        }
+
         int size() const {
             return elements.size();
         }
@@ -25,9 +32,9 @@ namespace lib {
             return elements.empty();
         }
 
-        /*bool contains(const T& element) const {
-
-        }*/
+        bool contains(const T& element) const {
+            return std::find(elements.begin(), elements.end()) != elements.end();
+        }
 
         void push_front(const T& element) {
             elements.push_front(element);
@@ -55,6 +62,11 @@ namespace lib {
 
         void erase_if(std::function<bool(const T&)> predicate) {
             std::erase_if(elements, predicate);
+        }
+
+        template <typename UnaryFunction>
+        bool any_of(UnaryFunction check) const {
+            return std::any_of(elements.begin(), elements.end(), check);
         }
 
         template <typename UnaryFunction>

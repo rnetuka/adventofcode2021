@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <regex>
 #include <sstream>
-#include "../utils/string.h"
 #include "string.h"
 
 namespace lib {
@@ -158,8 +157,16 @@ namespace lib {
     }
 
     String& String::operator+=(int number) {
-        data += to_char(number);
+        data += itoa(number);
         return *this;
+    }
+
+    String& String::operator+=(const char* str) {
+
+    }
+
+    String& String::operator+=(const String& other) {
+
     }
 
     String::operator int() const {
@@ -225,6 +232,16 @@ namespace lib {
 
     int atoi(char character) {
         return character - '0';
+    }
+
+    char itoa(int digit) {
+        if (digit < 0 || digit > 9)
+            throw std::invalid_argument("Digit out of range");
+        return static_cast<char>(digit + '0');
+    }
+
+    int stoi(const String& string, int base) {
+        return std::stoi(string, nullptr, base);
     }
 
     String sorted(const String& str) {

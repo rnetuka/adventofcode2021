@@ -140,12 +140,12 @@ namespace Day3 {
         string co2;
 
         for (int i = 0; i < length; i++) {
-            char oxygen_bit = to_char(most_common_bit(oxygen_candidates, i));
+            char oxygen_bit = itoa(most_common_bit(oxygen_candidates, i));
             oxygen_candidates.erase_if([i, oxygen_bit](auto& number) { return number[i] != oxygen_bit; });
             if (oxygen_candidates.size() == 1)
                 oxygen = *oxygen_candidates.begin();
 
-            char co2_bit = to_char(! most_common_bit(co2_candidates, i));
+            char co2_bit = itoa(! most_common_bit(co2_candidates, i));
             co2_candidates.erase_if([i, co2_bit](auto& number) { return number[i] != co2_bit; });
             if (co2_candidates.size() == 1)
                 co2 = *co2_candidates.begin();
