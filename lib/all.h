@@ -10,6 +10,7 @@
 #include "hash.h"
 #include "iostream.h"
 #include "map.h"
+#include "number.h"
 #include "optional.h"
 #include "queue.h"
 #include "set.h"

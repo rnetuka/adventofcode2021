@@ -31,12 +31,15 @@ namespace lib {
         [[nodiscard]] String upper_case() const;
         [[nodiscard]] String substring(int start, int end = -1) const;
         [[nodiscard]] String replace_all(const String& substring, const String& replacement) const;
+        [[nodiscard]] String prepend(char c, int times) const;
+        [[nodiscard]] String prepend(const String& str) const;
 
         template <typename T = String>
         vector<T> split(char delimiter = ' ') const;
 
         //vector<String> split(char delimiter) const;
         vector<String> split(const std::string& delimiter) const;
+        vector<char> chars() const;
 
         bool empty() const;
         bool contains(char character) const;
@@ -73,6 +76,7 @@ namespace lib {
     int atoi(char character);
     char itoa(int number);
     int stoi(const String& string, int base = 10);
+    long stol(const String& string, int base = 10);
 
 }
 

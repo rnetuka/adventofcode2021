@@ -72,6 +72,18 @@ namespace lib {
         return { result };
     }
 
+    String String::prepend(char c, int times) const {
+        std::string result;
+        for (int i = 0; i < times; i++)
+            result += c;
+        result += data;
+        return { result };
+    }
+
+    String String::prepend(const String& str) const {
+        return { str.data + data };
+    }
+
     String String::insert(int i, const String& substring) const {
         std::string copy = data;
         copy.insert(i + 1, substring.data);
@@ -162,11 +174,13 @@ namespace lib {
     }
 
     String& String::operator+=(const char* str) {
-
+        data += str;
+        return *this;
     }
 
     String& String::operator+=(const String& other) {
-
+        data += other.data;
+        return *this;
     }
 
     String::operator int() const {
@@ -222,6 +236,13 @@ namespace lib {
         return result;
     }
 
+    vector<char> String::chars() const {
+        vector<char> result;
+        for(char c : data)
+            result.push_back(c);
+        return result;
+    }
+
     std::ostream& operator<<(std::ostream& stream, const String& string) {
         return stream << string.data;
     }
@@ -242,6 +263,10 @@ namespace lib {
 
     int stoi(const String& string, int base) {
         return std::stoi(string, nullptr, base);
+    }
+
+    long stol(const String& string, int base) {
+        return std::stol(string, nullptr, base);
     }
 
     String sorted(const String& str) {

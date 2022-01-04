@@ -39,6 +39,16 @@ namespace lib {
             return result;
         }
 
+        operator bool() const {
+            return !elements.empty();
+        }
+
+        Queue& operator+=(const vector<T>& container) {
+            for (auto& element : container)
+                push(element);
+            return *this;
+        }
+
     };
 
     template <typename T>

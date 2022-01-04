@@ -44,8 +44,10 @@ namespace lib {
             elements.push_back(element);
         }
 
-        void pop_front() {
+        T pop_front() {
+            T element = elements.front();
             elements.pop_front();
+            return element;
         }
 
         void pop_back() {

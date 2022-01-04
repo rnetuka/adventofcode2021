@@ -23,6 +23,7 @@ int main(int argc, char** argv) {
             case 13: Day13::print_answers(); break;
             case 14: Day14::print_answers(); break;
             case 15: Day15::print_answers(); break;
+            case 16: Day16::print_answers(); break;
         }
     }
 
