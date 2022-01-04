@@ -28,4 +28,6 @@ namespace lib {
 
     using integer = Integer;
 
+    int max(int a, int b);
+
 }

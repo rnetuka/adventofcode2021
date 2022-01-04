@@ -1,6 +1,5 @@
 //
-// Created by rnetuka on 07.12.21.
+// Created by rnetuka on 04.01.22.
 //
 
-#include "geometry/point.h"
-#include "geometry/line_segment.h"
+#include "geometry/all.h"

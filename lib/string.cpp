@@ -25,6 +25,10 @@ namespace lib {
 
     }
 
+    String::String(char character) : length { 1 } {
+        data += character;
+    }
+
     String String::left_trim() const {
         std::string result = data;
         result.erase(result.begin(), find_if(result.begin(), result.end(), [](char c) {

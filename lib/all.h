@@ -3,8 +3,8 @@
 //
 
 #include "algorithm.h"
+#include "exception.h"
 #include "file.h"
-#include "geometry.h"
 #include "graph/graph.h"
 #include "grid.h"
 #include "hash.h"

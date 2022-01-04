@@ -109,6 +109,16 @@ namespace lib {
             return elements.end();
         }
 
+        template <typename UnaryFunction>
+        friend bool any_of(const Vector vector, UnaryFunction check) {
+            return std::any_of(vector.elements.begin(), vector.elements.end(), check);
+        }
+
+        template <typename UnaryFunction>
+        friend bool all_of(const Vector vector, UnaryFunction check) {
+            return std::all_of(vector.elements.begin(), vector.elements.end(), check);
+        }
+
     };
 
     template <typename T>

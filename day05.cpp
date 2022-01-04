@@ -78,6 +78,7 @@
 #include <cassert>
 #include "day05.h"
 #include "lib/all.h"
+#include "lib/geometry.h"
 
 using namespace geom;
 using namespace lib;

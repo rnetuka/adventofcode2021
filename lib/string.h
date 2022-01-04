@@ -22,6 +22,7 @@ namespace lib {
         String(const std::string& data);
         String(const char* data);
         String(int number);
+        String(char character);
 
         [[nodiscard]] String left_trim() const;
         [[nodiscard]] String right_trim() const;

@@ -4,6 +4,7 @@
 
 #include <bitset>
 #include <sstream>
+#include "exception.h"
 #include "number.h"
 
 namespace lib {
@@ -16,7 +17,7 @@ namespace lib {
         this->value = value;
     }
 
-    Integer::Integer(const string& string) : value { 0 } {
+    Integer::Integer(const string& string) {
         if (string.starts_with("0x")) {
             std::stringstream stream;
             stream << std::hex << string;
@@ -28,10 +29,13 @@ namespace lib {
         }
     }
 
-    Integer Integer::from_hex(char hex) {
-        string str;
-        str += hex;
-        return Integer::from_hex(str);
+    Integer Integer::from_hex(char character) {
+        string allowed = "0123456789abcdefABCDEF";
+        if (! allowed.contains(character))
+            throw invalid_argument("");
+
+        string hex { character };
+        return Integer::from_hex(hex);
     }
 
     Integer Integer::from_hex(const string& hex) {
@@ -59,6 +63,10 @@ namespace lib {
 
     Integer::operator int() const {
         return value;
+    }
+
+    int max(int a, int b) {
+        return a >= b ? a : b;
     }
 
 }

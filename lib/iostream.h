@@ -11,5 +11,6 @@ namespace lib {
     using ostream = std::ostream;
 
     static auto& cout = std::cout;
+    static auto& boolalpha = std::boolalpha;
 
 }
