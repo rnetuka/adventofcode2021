@@ -58,7 +58,7 @@ namespace Day17 {
 
         // Optimization
         // consider only X velocities lower than target area max X because otherwise it would just overflew the area in the first step
-        for (int x_velocity = 1; x_velocity <= 250; x_velocity++)
+        for (int x_velocity = 1; x_velocity <= target_area.max_x(); x_velocity++)
             // Experimentally, there are no changes after value 110
             for (int y_velocity = 0; y_velocity < 110; y_velocity++)
                 if (try_probe(x_velocity, y_velocity))
@@ -72,7 +72,7 @@ namespace Day17 {
         set<Point> velocities;
         // Optimization
         // consider only X velocities lower than target area max X because otherwise it would just overflew the area in the first step
-        for (int x_velocity = 1; x_velocity <= 250; x_velocity++)
+        for (int x_velocity = 1; x_velocity <= target_area.max_x(); x_velocity++)
             // Experimentally, there are no changes outside interval (-110; 110)
             for (int y_velocity = -110; y_velocity < 110; y_velocity++)
                 if (try_probe(x_velocity, y_velocity))
