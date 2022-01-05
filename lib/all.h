@@ -13,6 +13,7 @@
 #include "number.h"
 #include "optional.h"
 #include "queue.h"
+#include "regex.h"
 #include "set.h"
 #include "stack.h"
 #include "stack.h"

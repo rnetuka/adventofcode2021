@@ -18,9 +18,13 @@ namespace lib {
     }
 
     String File::read() const {
+        String result;
         fstream stream { path };
-        std::string result;
-        stream >> result;
+        while (stream) {
+            std::string line;
+            getline(stream, line);
+            result += line + "\n";
+        }
         return result;
     }
 

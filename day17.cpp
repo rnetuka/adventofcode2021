@@ -22,18 +22,22 @@ namespace Day17 {
         }
     };
 
-    bool try_probe(int x_velocity, int y_velocity) {
-        //target area: x=206..250, y=-105..-57
-        int min_x = 206;
-        int max_x = 250;
-        int min_y = -105;
-        int max_y = -57;
+    Rectangle read_input() {
+        string input = File::open("input/day17.txt").read();
+        auto search = regex::search(input, R"(x=(-?[0-9]+)\.\.(-?[0-9]+), y=(-?[0-9]+)\.\.(-?[0-9]+))");
+        int min_x = stoi(search.group(1));
+        int max_x = stoi(search.group(2));
+        int min_y = stoi(search.group(3));
+        int max_y = stoi(search.group(4));
         int width = max_x - min_x;
         int height = max_y - min_y;
-        Rectangle target_area = Rectangle::from({ min_x, max_y }).width(width).height(height);
+        return Rectangle::from({ min_x, max_y }).width(width).height(height);
+    }
 
+    const Rectangle target_area = read_input();
+
+    bool try_probe(int x_velocity, int y_velocity) {
         Probe probe { 0, 0, x_velocity, y_velocity };
-
         while (true) {
             probe.x += probe.x_velocity;
             probe.y += probe.y_velocity;
@@ -77,6 +81,7 @@ namespace Day17 {
     }
 
     void print_answers() {
+        read_input();
         int answer_1 = solution_1();
         int answer_2 = solution_2();
 
